@@ -22,6 +22,6 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        Post::factory(30)->has(Comment::factory(15)->for($user))->for($user)->create();
+        Post::factory(30)->has(Comment::factory(15))->create();
     }
 }

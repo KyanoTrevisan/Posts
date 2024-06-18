@@ -21,7 +21,7 @@ class CommentFactory extends Factory
         return [
             'user_id' => User::factory(), // Ensure a User is created or assigned for each comment
             'post_id' => Post::factory(),
-            'body' => $this->faker->paragraph, // Use 'body' instead of 'content'
+            'body' => $this->faker->realText(),
             'created_at' => now(),
             'updated_at' => now()
         ];
