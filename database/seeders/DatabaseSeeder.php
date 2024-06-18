@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,10 +19,17 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $user = User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'sooox',
+            'email' => 'sooox@cocaine.ninja',
+            'password' => '&K$#c5uf2@!$!474C82*639J^'
         ]);
 
-        Post::factory(30)->has(Comment::factory(15))->create();
+        $markdownContent = File::get(public_path('assets/markdown-guide.md'));
+
+        Post::create([
+            'user_id' => $user->id,
+            'title' => 'Markdown Guide',
+            'body' => $markdownContent,
+        ]);
     }
 }

@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Base styles */
+body {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a202c;
+        color: #e2e8f0;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #e2e8f0 !important;
+    }
+
+    code {
+        background-color: #2d3748; /* Ensure inline code is visible */
+        color: #f8f8f2 !important;
+        padding: 3px;
+        border-radius: 4px;
+    }
+
+    strong {
+        font-weight: bold;
+        color: #e2e8f0 !important; /* Ensure bold text is visible */
+    }
+
+    p, ul, ol {
+        color: #e2e8f0 !important; /* Ensure paragraph text is visible */
+    }
+
+    p a {
+        color: dodgerblue !important;
+        text-decoration: underline;
+    }
+}
