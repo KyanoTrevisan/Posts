@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         $user = User::factory()->create([
             'name' => 'sooox',
             'email' => 'sooox@cocaine.ninja',
-            'password' => '&K$#c5uf2@!$!474C82*639J^'
+            'password' => bcrypt('&K$#c5uf2@!$!474C82*639J^')
         ]);
 
         $markdownContent = File::get(public_path('assets/markdown-guide.md'));
