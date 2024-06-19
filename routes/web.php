@@ -1,17 +1,23 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
 });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('admin/dashboard', [AdminController::class, 'index'])
+    ->middleware(['auth', 'admin'])
+    ->name('admin.dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -23,3 +29,4 @@ require __DIR__.'/auth.php';
 
 Route::resource('posts', PostController::class);
 Route::middleware('auth')->resource('posts.comments', CommentController::class);
+

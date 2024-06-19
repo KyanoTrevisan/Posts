@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="flex items-center shrink-0">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ auth()->check() && auth()->user()->isType('admin') ? route('admin.dashboard') : route('dashboard') }}">
                         <x-application-logo class="block w-auto h-9 text-gray-800 fill-current dark:text-gray-200" />
                     </a>
                 </div>

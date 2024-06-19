@@ -22,6 +22,13 @@
                 </form>
             @endauth
 
+            @guest
+            <p class="my-6 text-center text-gray-300">Please <a href="{{ route('login') }}" class="text-blue-500">login</a> or
+                <a href="{{ route('register') }}" class="text-blue-500">register</a>
+                to post a comment!
+            </p>
+            @endguest
+
             <ul class="mt-4 divide-y">
                 @foreach ($comments as $comment)
                     <li class="px-2 py-4">

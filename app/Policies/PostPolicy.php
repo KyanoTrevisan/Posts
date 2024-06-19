@@ -29,7 +29,7 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'editor';
+        return $user->usertype === 'admin' || $user->usertype === 'editor';
     }
 
     /**
@@ -37,7 +37,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->id === $post->user_id;
+        return $user->usertype === 'admin' || $user->id === $post->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->id === $post->user_id;
+        return $user->usertype === 'admin' || $user->id === $post->user_id;
     }
 
     /**
