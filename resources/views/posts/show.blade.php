@@ -17,8 +17,8 @@
             @auth
                 <form action="{{ route('posts.comments.store', $post) }}" method="post" class="mt-3">
                     @csrf
-                    <textarea name="body" id="body" cols="30" rows="5" class="w-full text-black"></textarea>
-                    <x-primary-button type="submit" class="mt-1">Add Comment</x-primary-button>
+                    <textarea name="body" id="body" cols="30" rows="5" class="block px-3 mb-3 w-full rounded-md border-gray-300 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"></textarea>
+                    <x-secondary-button type="submit" class="mt-1">Add Comment</x-secondary-button>
                 </form>
             @endauth
 

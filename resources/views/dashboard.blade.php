@@ -34,7 +34,8 @@
                             <h2 class="mb-2 text-xl font-semibold">Recent Activity</h2>
                             <!-- Example of recent posts, you can replace with actual data -->
                             @foreach(auth()->user()->posts->take(5) as $post)
-                                <p><a href="{{ route('posts.show', $post) }}" class="text-blue-500">{{ $post->title }}</a> - {{ $post->created_at->diffForHumans() }}</p>
+                                <p><a href="{{ route('posts.show', $post) }}" class="text-blue-500">{{ $post->title }}</a></p>
+                                <p class="pb-2">{{ $post->created_at->diffForHumans() }}</p>
                             @endforeach
                         </div>
 

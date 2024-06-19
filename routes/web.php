@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
@@ -30,3 +31,6 @@ require __DIR__.'/auth.php';
 Route::resource('posts', PostController::class);
 Route::middleware('auth')->resource('posts.comments', CommentController::class);
 
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', UserController::class);
+});

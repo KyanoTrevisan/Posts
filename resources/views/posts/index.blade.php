@@ -18,7 +18,7 @@
                         @can('update', $post)
                             <form action="{{ route('posts.edit', $post) }}" method="#">
                                 @csrf
-                                <x-primary-button type="submit" class="mr-3">Update</x-primary-button>
+                                <x-primary-button type="submit" class="mr-3">Edit</x-primary-button>
                             </form>
                         @endcan
                         @can('delete', $post)
