@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,33 +11,77 @@ use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
 {
-    // Display all messages for the authenticated user
+    // Display all conversations for the authenticated user
     public function index()
     {
-        $messages = Message::where('sender_id', Auth::id())
-                            ->orWhere('recipient_id', Auth::id())
-                            ->get();
+        $user = Auth::user();
+        $conversations = Conversation::where('user1_id', $user->id)
+                                      ->orWhere('user2_id', $user->id)
+                                      ->get();
 
-        return view('messages.index', compact('messages'));
+        return view('messages.index', compact('conversations'));
     }
 
-    // Show form for creating a new message
-    public function create()
+    // Show conversation between the authenticated user and another user
+    public function showConversation($id)
+    {
+        $user = Auth::user();
+        $conversation = Conversation::findOrFail($id);
+
+        if ($conversation->user1_id !== $user->id && $conversation->user2_id !== $user->id) {
+            return redirect()->route('messages.index')->with('error', 'Unauthorized access to conversation.');
+        }
+
+        $messages = $conversation->messages;
+
+        return view('messages.conversation', compact('conversation', 'messages'));
+    }
+
+    // Show form to start a new conversation
+    public function createConversation()
     {
         $users = User::where('id', '!=', Auth::id())->get();
         return view('messages.create', compact('users'));
     }
 
-    // Store a new message
-    public function store(Request $request)
+    // Handle form submission to start a new conversation
+    public function storeConversation(Request $request)
     {
         $request->validate([
             'recipient_id' => 'required|exists:users,id',
+        ]);
+
+        $sender = Auth::user();
+        $recipient = User::findOrFail($request->recipient_id);
+
+        // Check if a conversation already exists
+        $conversation = Conversation::where(function ($query) use ($sender, $recipient) {
+            $query->where('user1_id', $sender->id)->where('user2_id', $recipient->id);
+        })->orWhere(function ($query) use ($sender, $recipient) {
+            $query->where('user1_id', $recipient->id)->where('user2_id', $sender->id);
+        })->first();
+
+        if (!$conversation) {
+            $conversation = Conversation::create([
+                'user1_id' => $sender->id,
+                'user2_id' => $recipient->id,
+            ]);
+        }
+
+        return redirect()->route('messages.showConversation', $conversation->id);
+    }
+
+    // Store a new message in a conversation
+    public function store(Request $request)
+    {
+        $request->validate([
+            'conversation_id' => 'required|exists:conversations,id',
             'message' => 'required|string',
         ]);
 
-        $recipient = User::findOrFail($request->recipient_id);
+        $conversation = Conversation::findOrFail($request->conversation_id);
         $sender = Auth::user();
+        $recipient = $conversation->user1_id === $sender->id ? $conversation->user2 : $conversation->user1;
 
         if (!$recipient->keys || !$sender->keys) {
             Log::error('Either sender or recipient does not have encryption keys.');
@@ -65,64 +110,15 @@ class MessageController extends Controller
 
             Message::create([
                 'sender_id' => $sender->id,
-                'recipient_id' => $request->recipient_id,
+                'recipient_id' => $recipient->id,
                 'message' => $encryptedMessage,
+                'conversation_id' => $conversation->id,
             ]);
 
-            return redirect()->route('messages.index')->with('success', 'Message sent successfully.');
+            return redirect()->route('messages.showConversation', $conversation->id)->with('success', 'Message sent successfully.');
         } catch (\Exception $e) {
             Log::error('Encryption error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to encrypt and send the message.');
-        }
-    }
-
-    // Display a specific message
-    public function show(Message $message)
-    {
-        $user = Auth::user();
-
-        if (!$user->keys) {
-            Log::error('User does not have encryption keys.');
-            return redirect()->route('messages.index')->with('error', 'You do not have encryption keys.');
-        }
-
-        try {
-            $userPrivateKey = sodium_hex2bin($user->keys->private_key);
-            $messageContent = sodium_hex2bin($message->message);
-            $nonce = substr($messageContent, 0, SODIUM_CRYPTO_BOX_NONCEBYTES);
-            $ciphertext = substr($messageContent, SODIUM_CRYPTO_BOX_NONCEBYTES);
-
-            Log::info('User Private Key: ' . $user->keys->private_key);
-            Log::info('Message Content: ' . $message->message);
-            Log::info('Nonce: ' . sodium_bin2hex($nonce));
-            Log::info('Ciphertext: ' . sodium_bin2hex($ciphertext));
-
-            $senderPublicKey = $user->id === $message->recipient_id ?
-                               sodium_hex2bin($message->sender->keys->public_key) :
-                               sodium_hex2bin($message->recipient->keys->public_key);
-
-            Log::info('Sender Public Key: ' . sodium_bin2hex($senderPublicKey));
-
-            $decryptedMessage = sodium_crypto_box_open(
-                $ciphertext,
-                $nonce,
-                sodium_crypto_box_keypair_from_secretkey_and_publickey(
-                    $userPrivateKey,
-                    $senderPublicKey
-                )
-            );
-
-            if ($decryptedMessage === false) {
-                throw new \Exception('Decryption failed.');
-            }
-
-            Log::info('Decrypted Message: ' . $decryptedMessage);
-
-            return view('messages.show', compact('message', 'decryptedMessage'));
-
-        } catch (\Exception $e) {
-            Log::error('Failed to decrypt message: ' . $e->getMessage());
-            return redirect()->route('messages.index')->with('error', 'Unable to decrypt message.');
         }
     }
 }

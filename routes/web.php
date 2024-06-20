@@ -38,7 +38,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 Route::middleware(['auth'])->group(function () {
     Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
-    Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+    Route::get('messages/conversation/{id}', [MessageController::class, 'showConversation'])->name('messages.showConversation');
+    Route::get('messages/create', [MessageController::class, 'createConversation'])->name('messages.createConversation');
+    Route::post('messages/conversation', [MessageController::class, 'storeConversation'])->name('messages.storeConversation');
     Route::post('messages', [MessageController::class, 'store'])->name('messages.store');
-    Route::get('messages/{message}', [MessageController::class, 'show'])->name('messages.show');
 });
