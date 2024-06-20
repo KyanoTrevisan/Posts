@@ -57,4 +57,9 @@ class User extends Authenticatable
     {
         return $this->usertype === $type;
     }
+
+    public function keys()
+    {
+        return $this->hasOne(UserKey::class);
+    }
 }

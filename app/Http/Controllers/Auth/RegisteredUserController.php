@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserKey;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,6 +40,16 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+        ]);
+
+        $keyPair = sodium_crypto_box_keypair();
+        $publicKey = sodium_crypto_box_publickey($keyPair);
+        $privateKey = sodium_crypto_box_secretkey($keyPair);
+
+        UserKey::create([
+            'user_id' => $user->id,
+            'public_key' => sodium_bin2hex($publicKey),
+            'private_key' => sodium_bin2hex($privateKey),
         ]);
 
         event(new Registered($user));
