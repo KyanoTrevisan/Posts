@@ -16,8 +16,8 @@ class MessageController extends Controller
     {
         $user = Auth::user();
         $conversations = Conversation::where('user1_id', $user->id)
-                                      ->orWhere('user2_id', $user->id)
-                                      ->get();
+            ->orWhere('user2_id', $user->id)
+            ->get();
 
         return view('messages.index', compact('conversations'));
     }
@@ -32,7 +32,8 @@ class MessageController extends Controller
             return redirect()->route('messages.index')->with('error', 'Unauthorized access to conversation.');
         }
 
-        $messages = $conversation->messages;
+        // Fetch messages in descending order
+        $messages = $conversation->messages()->orderBy('created_at', 'desc')->get();
 
         return view('messages.conversation', compact('conversation', 'messages'));
     }

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Michelf\Markdown;
 
 class Message extends Model
 {
@@ -57,5 +59,11 @@ class Message extends Model
         } catch (\Exception $e) {
             return 'Unable to decrypt message.';
         }
+    }
+
+    // Attribute to format the message with Markdown
+    public function formattedMessage(): Attribute
+    {
+        return Attribute::get(fn () => str($this->decrypted_message)->markdown());
     }
 }
