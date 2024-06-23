@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_keys', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->onDelete('cascade');
-            $table->text('public_key');
-            $table->text('private_key');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->softDeletes(); // This will add the deleted_at column
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_keys');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropSoftDeletes(); // This will drop the deleted_at column
+        });
     }
 };

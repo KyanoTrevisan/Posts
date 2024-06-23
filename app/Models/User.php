@@ -6,12 +6,13 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +49,34 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            // Delete all associated messages
+            $user->sentMessages()->delete();
+            $user->receivedMessages()->delete();
+
+            // Delete all associated posts and comments
+            $user->posts()->delete();
+            $user->comments()->delete();
+
+            // Delete all associated keys
+            $user->keys()->delete();
+        });
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'recipient_id');
+    }
+
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -56,6 +85,11 @@ class User extends Authenticatable
     public function isType(string $type)
     {
         return $this->usertype === $type;
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 
     public function keys()

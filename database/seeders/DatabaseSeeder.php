@@ -45,26 +45,19 @@ class DatabaseSeeder extends Seeder
             'body' => $markdownContent,
         ]);
 
-        Post::create([
-            'user_id' => $sooox->id,
-            'title' => 'About the dark web...',
-            'body' => File::get(public_path('assets/articles/darkweb.md'))
-        ]);
+        // Get all files in the 'assets/articles/' directory
+        $files = File::files(public_path('assets/articles/'));
 
-        // Create additional users and their encryption keys
-        $users = User::factory(10)->create();
+        foreach ($files as $file) {
+            // Get the file name without the extension
+            $title = pathinfo($file->getFilename(), PATHINFO_FILENAME);
 
-        foreach ($users as $user) {
-            $keyPair = sodium_crypto_box_keypair();
-            $publicKey = sodium_crypto_box_publickey($keyPair);
-            $privateKey = sodium_crypto_box_secretkey($keyPair);
-
-            UserKey::create([
-                'user_id' => $user->id,
-                'public_key' => sodium_bin2hex($publicKey),
-                'private_key' => sodium_bin2hex($privateKey),
+            // Create a post for each file
+            Post::create([
+                'user_id' => $sooox->id,
+                'title' => ucfirst(str_replace('_', ' ', $title)), // Format title
+                'body' => File::get($file->getPathname())
             ]);
         }
-        // Post::factory(10)->has(Comment::factory(3))->create();
     }
 }
