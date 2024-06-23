@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
         $sooox = User::factory()->create([
             'name' => 'sooox',
             'email' => 'sooox@cocaine.ninja',
-            'password' => bcrypt('&K$#c5uf2@!$!474C82*639J^'), // or Hash::make('password')
+            'password' => bcrypt('&K$#c5uf2@!$!474C82*639J^'),
+            'email_verified_at' => null,
             'usertype' => 'admin'
         ]);
 

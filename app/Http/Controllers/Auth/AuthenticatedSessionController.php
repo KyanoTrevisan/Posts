@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -28,8 +29,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if ($request->user()->usertype === 'admin')
-        {
+        if ($request->user()->pgp_public_key) {
+            $originalMessage = $this->generateRandomString();
+            session(['original_message' => $originalMessage]);
+
+            return redirect()->route('verify-pgp.form');
+        }
+
+        if ($request->user()->usertype === 'admin') {
             return redirect('admin/dashboard');
         }
 
@@ -48,5 +55,10 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    private function generateRandomString($length = 16)
+    {
+        return bin2hex(random_bytes($length / 2));
     }
 }

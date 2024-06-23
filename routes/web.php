@@ -7,6 +7,9 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\PgpVerificationController;
 
 Route::get('/', function () {
     return view('dashboard');
@@ -25,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('pgp/verify', [PgpVerificationController::class, 'verify'])->name('pgp.verify');
 });
 
 require __DIR__.'/auth.php';
@@ -43,3 +47,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('messages/conversation', [MessageController::class, 'storeConversation'])->name('messages.storeConversation');
     Route::post('messages', [MessageController::class, 'store'])->name('messages.store');
 });
+
+Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('login', [AuthenticatedSessionController::class, 'store']);
+Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+Route::post('verify', [AuthenticatedSessionController::class, 'verify'])->name('auth.verify');
+
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
+Route::get('verify-pgp', [RegisteredUserController::class, 'verifyPgpForm'])->name('verify-pgp.form');
+Route::post('verify-pgp', [RegisteredUserController::class, 'verifyPgp'])->name('verify-pgp');

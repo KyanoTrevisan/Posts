@@ -24,6 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'usertype',
+        'pgp_public_key',
+        'pgp_verified_at',
     ];
 
     /**
