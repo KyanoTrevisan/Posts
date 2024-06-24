@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('usertype')->default('user');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->text('pgp_public_key')->nullable(); // Ensure this line exists
+            $table->text('pgp_public_key')->nullable();
+            $table->timestamp('pgp_verified_at')->nullable();
+            $table->text('bio')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -36,10 +38,6 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
-        });
-
-        Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('pgp_verified_at')->nullable();
         });
     }
 

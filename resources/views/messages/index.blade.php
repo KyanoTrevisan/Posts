@@ -8,6 +8,7 @@
 
                 For example, here is what a message looks like in our database: <code>9f882840058d643b4abdef7c3eb1185213ffda1a664d0d4ae71b999157701f98e73420767ac1085a4c7f2aa6ebb14d0566</code>
             </p>
+            <p>Of course, it never hurts to be extra cautious and encrypt all messages locally with PGP - dont trust anyone!</p>
         </div>
 
         <p class="py-2">

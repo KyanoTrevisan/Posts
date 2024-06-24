@@ -26,6 +26,7 @@ class User extends Authenticatable
         'usertype',
         'pgp_public_key',
         'pgp_verified_at',
+        'bio',
     ];
 
     /**

@@ -10,6 +10,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\PgpVerificationController;
+use App\Http\Controllers\UserProfileController;
 
 Route::get('/', function () {
     return view('dashboard');
@@ -57,3 +58,5 @@ Route::get('/register', [RegisteredUserController::class, 'create'])->name('regi
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::get('verify-pgp', [RegisteredUserController::class, 'verifyPgpForm'])->name('verify-pgp.form');
 Route::post('verify-pgp', [RegisteredUserController::class, 'verifyPgp'])->name('verify-pgp');
+
+Route::get('/users/{user}', [UserProfileController::class, 'show'])->name('users.show');

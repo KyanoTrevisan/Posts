@@ -59,6 +59,12 @@
             @enderror
         </div>
 
+        <div>
+            <x-input-label for="bio">Bio:</x-input-label>
+            <textarea id="bio" name="bio" class="block w-full rounded-md border-gray-300 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                {{ old('bio', $user->bio) }}</textarea>
+        </div>
+
         <div class="flex gap-4 items-center">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

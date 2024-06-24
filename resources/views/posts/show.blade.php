@@ -2,9 +2,9 @@
     <div class="px-2 py-6 mx-auto max-w-5xl">
         <div>
             <h1 class="text-3xl font-semibold">{{ $post->title }}</h1>
-            <span class="text-sm">
-                {{ $post->created_at->diffForHumans() }} by {{ $post->user->name }}
-            </span>
+            <p class="text-sm">
+                {{ $post->created_at->diffForHumans() }} by <a href="{{ route('users.show', $post->user) }}">{{ $post->user->name }}</a>
+            </p>
         </div>
 
         <div class="mt-6 prose">
@@ -33,9 +33,9 @@
                 @foreach ($comments as $comment)
                     <li class="px-2 py-4">
                         <p>{{ $comment->body }}</p>
-                        <span class="text-sm">
-                            {{ $comment->created_at->diffForHumans() }} by {{ $comment->user->name }}
-                        </span>
+                        <p class="text-sm">
+                            {{ $comment->created_at->diffForHumans() }} by <a href="{{ route('users.show', $comment->user) }}">{{ $comment->user->name }}</a>
+                        </p>
 
                         @can('delete', $comment)
                         <form action="{{ route('posts.comments.destroy', ['post' => $post, 'comment' => $comment]) }}" method="post" class="py-2">

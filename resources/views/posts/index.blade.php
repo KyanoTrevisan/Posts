@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="px-2 py-6 mx-auto max-w-5xl">
-        <ul class="divide-y">
+        <ul>
             @auth
                 @can('create', App\Models\Post::class)
                     <a href="{{ route('posts.create') }}"
@@ -9,27 +9,28 @@
                 @endcan
             @endauth
             @foreach ($posts as $post)
-                <li class="px-2 py-4">
+                <li class="px-2 py-6">
                     <a href="{{ route('posts.show', $post) }}" class="block text-xl font-semibold">{{ $post->title }}</a>
-                    <span class="text-sm">
-                        {{ $post->created_at->diffForHumans() }} by {{ $post->user->name }}
-                    </span>
-                    <div class="flex mt-2">
+                    <p>
                         @can('update', $post)
-                            <form action="{{ route('posts.edit', $post) }}" method="#">
-                                @csrf
-                                <x-primary-button type="submit" class="mr-3">Edit</x-primary-button>
-                            </form>
-                        @endcan
-                        @can('delete', $post)
-                            <form action="{{ route('posts.destroy', $post) }}" method="POST"
-                                onsubmit="return confirm('Are you sure you want to delete this post?');">
-                                @csrf
-                                @method('DELETE')
-                                <x-danger-button type="submit" class="mr-3">Delete</x-danger-button>
-                            </form>
-                        @endcan
-                    </div>
+                        <form action="{{ route('posts.edit', $post) }}" method="#" class="float-right">
+                            @csrf
+                            <x-primary-button type="submit" class="mb-3">Edit</x-primary-button>
+                        </form>
+                    @endcan
+                    @can('delete', $post)
+                        <form action="{{ route('posts.destroy', $post) }}" method="POST" class="float-right"
+                            onsubmit="return confirm('Are you sure you want to delete this post?');">
+                            @csrf
+                            @method('DELETE')
+                            <x-danger-button type="submit" class="mr-3">Delete</x-danger-button>
+                        </form>
+                    @endcan
+                    </p>
+                    <p class="text-sm">
+                        {{ $post->created_at->diffForHumans() }} by <a
+                            href="{{ route('users.show', $post->user) }}">{{ $post->user->name }}</a>
+                    </p>
                 </li>
             @endforeach
         </ul>
