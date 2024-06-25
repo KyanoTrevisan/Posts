@@ -41,6 +41,10 @@ echo "Database migrated."
 composer update
 echo "composer dependencies updated."
 
+# Compser install dependencies
+composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+echo "composer dependencies installed"
+
 # Run npm commands
 npm install
 echo "npm packages installed."
