@@ -79,4 +79,3 @@ fi
 
 # Go back to project root and start Laravel development server
 cd ../../../
-php artisan serve &
