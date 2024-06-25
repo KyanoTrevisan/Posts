@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserKey;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -25,10 +27,10 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'pgp_public_key' => 'nullable|string',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'pgp_public_key' => ['nullable', 'string'],
         ]);
 
         $user = User::create([
@@ -37,6 +39,18 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'pgp_public_key' => $request->pgp_public_key,
         ]);
+
+        $keyPair = sodium_crypto_box_keypair();
+        $publicKey = sodium_crypto_box_publickey($keyPair);
+        $privateKey = sodium_crypto_box_secretkey($keyPair);
+
+        UserKey::create([
+            'user_id' => $user->id,
+            'public_key' => sodium_bin2hex($publicKey),
+            'private_key' => sodium_bin2hex($privateKey),
+        ]);
+
+        event(new Registered($user));
 
         Auth::login($user);
 

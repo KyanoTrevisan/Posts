@@ -19,7 +19,7 @@
             </div>
         @endif
 
-        <meta http-equiv="refresh" content="30"> <!-- This will reload the page every 30 seconds -->
+        <meta http-equiv="refresh" content="15"> <!-- This will reload the page every 15 seconds -->
 
         <div class="overflow-y-scroll p-4 mb-4 h-96 rounded border border-gray-300" style="scroll-margin-bottom: 100px;">
             <ul>
